@@ -1,44 +1,43 @@
 import React, { useState } from 'react';
-import { TitlePageProps } from '../types';
+
+type TitlePageProps = {
+  onStartGame: (player1: string, player2: string) => void;
+};
 
 const TitlePage: React.FC<TitlePageProps> = ({ onStartGame }) => {
   const [player1, setPlayer1] = useState('');
   const [player2, setPlayer2] = useState('');
 
   const handleStart = () => {
-    if (!player1 || !player2) {
-      alert('Please enter both player names.');
+    if (!player1.trim() || !player2.trim()) {
+      alert('Please enter valid names for both players.');
       return;
     }
-    onStartGame(player1, player2);
+    onStartGame(player1.trim(), player2.trim());
   };
 
   return (
-    <div className='flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 space-y-6'>
-      <h1 className='text-4xl font-bold'>Welcome to Tic Tac Toe</h1>
-      <p className='text-lg text-center max-w-md'>
-        Get ready to challenge your friend! Enter your names below and
-        press "Start Game" to begin.
-      </p>
-      <div className='flex flex-col space-y-4'>
+    <div className='flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 space-y-8'>
+      <h1 className='text-5xl font-bold'>Welcome to Tic Tac Toe</h1>
+      <div className='flex flex-col space-y-4 w-64'>
         <input
           type='text'
           placeholder='Player 1 Name'
           value={player1}
           onChange={e => setPlayer1(e.target.value)}
-          className='w-64 px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+          className='px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500'
         />
         <input
           type='text'
           placeholder='Player 2 Name'
           value={player2}
           onChange={e => setPlayer2(e.target.value)}
-          className='w-64 px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+          className='px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500'
         />
       </div>
       <button
         onClick={handleStart}
-        className='px-6 py-2 bg-blue-500 dark:bg-blue-700 text-white font-bold rounded hover:bg-blue-600 dark:hover:bg-blue-800 transition'>
+        className='px-8 py-3 bg-blue-500 dark:bg-blue-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300'>
         Start Game
       </button>
     </div>

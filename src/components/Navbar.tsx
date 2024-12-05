@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <NavLink
-              to='/game'
+              to='/history'
               className={({ isActive }) =>
                 `text-lg ${
                   isActive
@@ -32,7 +32,7 @@ const Navbar: React.FC = () => {
                     : 'text-gray-900 dark:text-gray-100 hover:text-blue-500'
                 }`
               }>
-              Game
+              History
             </NavLink>
           </li>
           <li>

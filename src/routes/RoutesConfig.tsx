@@ -1,20 +1,38 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import TitlePage from '../components/TitlePage';
-import Board from '../components/Board';
-import About from '../components/About';
+import GameBoard from '../components/GameBoard';
 import Settings from '../components/Settings';
+import History from '../components/History';
+import { GameResult } from '../types';
 
 const RoutesConfig: React.FC = () => {
-  const [gameStarted, setGameStarted] = useState(false);
-  const [players, setPlayers] = useState({
+  const navigate = useNavigate();
+
+  const [currentPlayers, setCurrentPlayers] = useState({
     player1: '',
     player2: '',
   });
 
+  const [gameHistory, setGameHistory] = useState<GameResult[]>([]);
+
   const handleStartGame = (player1: string, player2: string) => {
-    setPlayers({ player1, player2 });
-    setGameStarted(true);
+    setCurrentPlayers({ player1, player2 });
+    navigate('/game');
+  };
+
+  const handleGameEnd = (board: string[], winner: string | null) => {
+    const winningLine = calculateWinningLine(board); // Calculate winning line
+    setGameHistory(prev => [
+      ...prev,
+      {
+        id: Date.now(),
+        board,
+        winner,
+        players: currentPlayers,
+        winningLine, // Matches the `GameResult` type
+      },
+    ]);
   };
 
   return (
@@ -26,30 +44,50 @@ const RoutesConfig: React.FC = () => {
       <Route
         path='/game'
         element={
-          gameStarted ? (
-            <Board
-              player1={players.player1}
-              player2={players.player2}
-            />
-          ) : (
-            <div className='flex items-center justify-center h-full'>
-              <h1 className='text-3xl font-bold text-gray-900 dark:text-gray-100'>
-                Please start the game from the home page.
-              </h1>
-            </div>
-          )
+          <GameBoard
+            player1={currentPlayers.player1}
+            player2={currentPlayers.player2}
+            onGameEnd={handleGameEnd}
+            onPlayAgain={() => navigate('/game')}
+            onReturnHome={() => navigate('/')}
+          />
         }
-      />
-      <Route
-        path='/about'
-        element={<About />}
       />
       <Route
         path='/settings'
         element={<Settings />}
       />
+      <Route
+        path='/history'
+        element={<History gameHistory={gameHistory} />}
+      />
     </Routes>
   );
+};
+
+// Helper function to calculate the winning line
+const calculateWinningLine = (squares: string[]): number[] | null => {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  for (const [a, b, c] of lines) {
+    if (
+      squares[a] &&
+      squares[a] === squares[b] &&
+      squares[a] === squares[c]
+    ) {
+      return [a, b, c];
+    }
+  }
+  return null;
 };
 
 export default RoutesConfig;
